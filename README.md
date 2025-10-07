@@ -39,11 +39,12 @@ This is a **static website** created for educational purposes and to demonstrate
 
 ## 🖼️ Screenshots
 
-### 🏠 Home Page  
-![Home Page](https://github.com/ChathurangaJD/sunflower-restaurant/blob/main/assets/screenshot_home.png)
+<img width="1919" height="841" alt="Screenshot 2025-10-07 091111" src="https://github.com/user-attachments/assets/b48f6b69-e37b-43a9-b640-c2a7231074a8" />
+  
+<img width="1919" height="843" alt="Screenshot 2025-10-07 091136" src="https://github.com/user-attachments/assets/8b8a04dd-c1f7-4975-b86c-753f41ebb48a" />
 
-### 🍽️ Menu Page  
-![Menu Page](https://github.com/ChathurangaJD/sunflower-restaurant/blob/main/assets/screenshot_menu.png)
+<img width="1919" height="842" alt="Screenshot 2025-10-07 091223" src="https://github.com/user-attachments/assets/74d68f7a-e895-437c-9216-0d15a905013f" />
+
 
 *(You can upload the provided screenshots to your repo under an `assets/` folder and rename them as above.)*
 
