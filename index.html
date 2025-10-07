@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunflower Restaurant</title>
+    <meta name="description" content="Authentic cuisine with fresh ingredients delivered to your door">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#FFAF00",
+                        secondary: "#FFD700",
+                        accent: "#FFF8DC"
+                    },
+                    fontFamily: {
+                        sans: ["'Open Sans'", "sans-serif"],
+                        serif: ["'Playfair Display'", "Share Tech"]
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .delivery-banner {
+            background: linear-gradient(90deg, #ff009d, #cf86b1);
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+        .sunflower-icon {
+            display: inline-block;
+            margin-right: 8px;
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="font-sans bg-amber-50 text-gray-800">
+    <!-- Delivery Banner -->
+    <div class="delivery-banner">
+        <div class="container mx-auto px-4">
+            <i class="fas fa-sun sunflower-icon"></i>
+            Home online order valid only within 10km radius
+            <i class="fas fa-sun sunflower-icon"></i>
+        </div>
+    </div>
+
+    <!-- Header with Navigation -->
+    <header class="sticky top-0 z-50 bg-white shadow-md">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="./logo.png" alt="Sunflower Restaurant logo" class="w-10 h-10 rounded-full">
+                <h1 class="text-2xl font-serif font-bold text-primary">Sunflower Restaurant</h1>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="text-primary hover:text-secondary transition">Home</a>
+                <a href="#menu" class="text-primary hover:text-secondary transition">Menu</a>
+                <a href="#about" class="text-primary hover:text-secondary transition">About</a>
+                <a href="#contact" class="text-primary hover:text-secondary transition">Contact</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="cart-button" class="p-2 text-primary hover:text-secondary relative">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-secondary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                </button>
+                <button class="md:hidden p-2 text-primary">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-serif font-bold text-primary">Your Order</h3>
+                    <button id="close-cart" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div id="cart-items" class="mb-6">
+                    <!-- Cart items will be dynamically inserted here -->
+                    <p id="empty-cart-message" class="text-gray-500 text-center py-4">Your cart is empty</p>
+                </div>
+                
+                <div class="border-t pt-4 mb-6">
+                    <div class="flex justify-between text-lg font-semibold mb-2">
+                        <span>Total:</span>
+                        <span id="cart-total">Rs 0.00</span>
+                    </div>
+                </div>
+                
+                <div id="checkout-section" class="hidden">
+                    <h4 class="text-lg font-serif font-bold text-primary mb-4">Payment Method</h4>
+                    <div class="mb-6">
+                        <div class="flex items-center mb-3">
+                            <input type="radio" id="cod" name="payment" value="cod" class="mr-2" checked>
+                            <label for="cod" class="text-gray-700">Cash on Delivery</label>
+                        </div>
+                        <div class="flex items-center mb-3">
+                            <input type="radio" id="card" name="payment" value="card" class="mr-2">
+                            <label for="card" class="text-gray-700">Credit/Debit Card</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Delivery Address and Phone Number -->
+                    <div id="delivery-details" class="bg-accent p-4 rounded-lg mb-6">
+                        <h4 class="text-lg font-serif font-bold text-primary mb-4">Delivery Information</h4>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Delivery Address</label>
+                            <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter your full address" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Phone Number</label>
+                            <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Enter your phone number" required>
+                        </div>
+                        <p class="text-sm text-primary font-semibold">
+                            <i class="fas fa-info-circle"></i> Delivery available within 10km only
+                        </p>
+                    </div>
+                    
+                    <div id="card-details" class="bg-accent p-4 rounded-lg mb-6 hidden">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">Card Number</label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="1234 5678 9012 3456">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-gray-700 mb-2">Expiry Date</label>
+                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="MM/YY">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 mb-2">CVV</label>
+                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="place-order" class="bg-primary hover:bg-secondary text-white px-6 py-3 rounded-full font-semibold transition w-full">
+                        Complete Order
+                    </button>
+                </div>
+                
+                <button id="view-cart" class="bg-primary hover:bg-secondary text-white px-6 py-3 rounded-full font-semibold transition w-full">
+                    View Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="order-confirmation" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg w-full max-w-md p-6 text-center">
+            <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+            <h3 class="text-2xl font-serif font-bold text-primary mb-4">Order Confirmed!</h3>
+            <p class="text-gray-700 mb-6">Thank you for your order. It will be delivered to your address shortly.</p>
+            <button id="confirm-ok" class="bg-primary hover:bg-secondary text-white px-6 py-3 rounded-full font-semibold transition">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative h-96 flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1445116572660-236099ec97a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80')">
+        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div class="relative z-10 text-center px-4">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Authentic Cuisine & Fresh Ingredients</h2>
+            <p class="text-xl text-white mb-8">Savor the flavors of our carefully prepared meals</p>
+            <a href="#menu" class="bg-primary hover:bg-secondary text-white px-8 py-3 rounded-full font-semibold transition">View Menu</a>
+        </div>
+    </section>
+
+    <!-- Featured Menu Section -->
+    <section id="menu" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-serif font-bold text-primary mb-4">Our Menu</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Discover our selection of delicious meals made with premium ingredients</p>
+            </div>
+            
+            <!-- Menu Filter -->
+            <div class="flex justify-center mb-8">
+                <div class="inline-flex rounded-md shadow-sm" role="group">
+                    <button type="button" data-category="all" class="category-filter px-4 py-2 text-sm font-medium text-primary bg-white rounded-l-lg border border-primary hover:bg-accent focus:z-10 focus:ring-2 focus:ring-primary">
+                        All Items
+                    </button>
+                    <button type="button" data-category="rice" class="category-filter px-4 py-2 text-sm font-medium text-primary bg-white border-t border-b border-primary hover:bg-accent focus:z-10 focus:ring-2 focus:ring-primary">
+                        Rice Dishes
+                    </button>
+                    <button type="button" data-category="kottu" class="category-filter px-4 py-2 text-sm font-medium text-primary bg-white rounded-r-md border border-primary hover:bg-accent focus:z-10 focus:ring-2 focus:ring-primary">
+                        Kottu
+                    </button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Rice Items -->
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="rice">
+                    <img src="./Bang-Bang-Chicken-Fried-Rice-2.jpg" alt="Chicken Rice" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Chicken Fried Rice</h3>
+                        <p class="text-gray-600 mb-4">Flavorful chicken served with aromatic rice and spices</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1200.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="1" data-name="Chicken Rice (Full)" data-price="550.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 900.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="2" data-name="Chicken Rice (Half)" data-price="450.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="rice">
+                    <img src="./FRIED-RICE-MINCE-AND-VEG-MIX.jpg" alt="Mix Rice" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Mix Fried Rice</h3>
+                        <p class="text-gray-600 mb-4">A delightful combination of flavors and textures</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1600.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="3" data-name="Mix Rice (Full)" data-price="1600.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 1300.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="4" data-name="Mix Rice (Half)" data-price="1300.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="rice">
+                    <img src="./Seafood rice with shrimp.jpg" alt="Sea Food Rice" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Sea Food Rice</h3>
+                        <p class="text-gray-600 mb-4">Fresh seafood delicately prepared with rice</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1500.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="5" data-name="Sea Food Rice (Full)" data-price="1500.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 1300.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="6" data-name="Sea Food Rice (Half)" data-price="1300.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="rice">
+                    <img src="./veg-fried-rice-500x375.jpg" alt="Vegetable Rice" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Vegetable Fried Rice</h3>
+                        <p class="text-gray-600 mb-4">Fresh vegetables with aromatic rice, and spices</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 900.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="7" data-name="Vegetable Rice (Full)" data-price="350.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 700.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="8" data-name="Vegetable Rice (Half)" data-price="700.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="rice">
+                    <img src="./DSC9297-2LowRes.webp" alt="chicken Rice" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Chicken Rice</h3>
+                        <p class="text-gray-600 mb-4">Fresh chicken, vegetables with aromatic rice, and spices</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 550.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="7" data-name="Vegetable Rice (Full)" data-price="350.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 450.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="8" data-name="Vegetable Rice (Half)" data-price="700.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="rice">
+                    <img src="./08-Basmathi-Rice-Curry-With-Fish-2-scaled.jpg" alt="fish Rice" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Fish Rice</h3>
+                        <p class="text-gray-600 mb-4">Fresh Fish, vegetables with aromatic rice, and spices</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 550.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="7" data-name="Vegetable Rice (Full)" data-price="350.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 450.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="8" data-name="Vegetable Rice (Half)" data-price="700.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="rice">
+                    <img src="./Egg-Curry-FB.jpg" alt="Egg Rice" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Egg Rice</h3>
+                        <p class="text-gray-600 mb-4">Egg & Fresh vegetables with aromatic rice, and spices</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 400.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="7" data-name="Vegetable Rice (Full)" data-price="350.00">Order</button>
+                        </div>
+                        <!--<div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 700.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="8" data-name="Vegetable Rice (Half)" data-price="700.00">Order</button>
+                        </div>-->
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="rice">
+                    <img src="./Rice-and-Curry-Veg.jpeg" alt="Vegetable Rice" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Vegetable Rice</h3>
+                        <p class="text-gray-600 mb-4">Fresh vegetables with aromatic rice, and spices</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 350.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="7" data-name="Vegetable Rice (Full)" data-price="350.00">Order</button>
+                        </div>
+                        <!--<div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 700.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="8" data-name="Vegetable Rice (Half)" data-price="700.00">Order</button>
+                        </div>-->
+                    </div>
+                </div>
+                
+                <!-- Kottu Items -->
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="kottu">
+                    <img src="./KUTTU-PORATTA.jpg" alt="Chicken Kottu" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Chicken Kottu</h3>
+                        <p class="text-gray-600 mb-4">Chopped roti with chicken, vegetables, and spices</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1200.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="9" data-name="Chicken Kottu (Full)" data-price="1200.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 900.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="10" data-name="Chicken Kottu (Half)" data-price="900.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="kottu">
+                    <img src="./Chicken_Kottu.jpg" alt="Chicken Kottu" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Mix Kottu</h3>
+                        <p class="text-gray-600 mb-4">Chopped roti with chicken, vegetables, eggs and spices</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1600.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="9" data-name="Chicken Kottu (Full)" data-price="1200.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 1300.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="10" data-name="Chicken Kottu (Half)" data-price="900.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="kottu">
+                    <img src="./putting-cheese-kottu-plate-local-footage-237236517_iconl.webp" alt="Chicken Kottu" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Chees Kottu</h3>
+                        <p class="text-gray-600 mb-4">Chopped roti with chicken, vegetables, and spices</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1500.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="9" data-name="Chicken Kottu (Full)" data-price="1200.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 1200.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="10" data-name="Chicken Kottu (Half)" data-price="900.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="kottu">
+                    <img src="./dolphin-kottu.jpg" alt="Chicken Kottu" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Dolphin Kottu</h3>
+                        <p class="text-gray-600 mb-4">Chopped roti with chicken, vegetables, eggs, prawns and spices</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1500.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="9" data-name="Chicken Kottu (Full)" data-price="1200.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 1300.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="10" data-name="Chicken Kottu (Half)" data-price="900.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="">
+                    <img src="./Noodles-LindseyEats.jpg" alt="Noodles" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Noodles</h3>
+                        <p class="text-gray-600 mb-4">Stir-fried noodles with vegetables and your choice of protein</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1200.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="11" data-name="Noodles (Full)" data-price="1200.00">Order</button>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 900.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="12" data-name="Noodles (Half)" data-price="900.00">Order</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="">
+                    <img src="./Sr-Lankan-Deviled-Chicken-21500-072f0c162d-1617328178.jpg" alt="Chicken Deval" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Chicken Deval</h3>
+                        <p class="text-gray-600 mb-4">crispy, tender chicken pieces tossed in a delicious, spicy, thick sauce</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1200.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="11" data-name="Noodles (Full)" data-price="1200.00">Order</button>
+                        </div>
+                        <!--<div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 900.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="12" data-name="Noodles (Half)" data-price="900.00">Order</button>
+                        </div>-->
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="">
+                    <img src="./DP-chicken-stew-bmjg-mediumSquareAt3X.jpg" alt="Stew" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Chicken Stew</h3>
+                        <p class="text-gray-600 mb-4">chicken soup's older cousin that is a little rough around the edges</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1200.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="11" data-name="Noodles (Full)" data-price="1200.00">Order</button>
+                        </div>
+                        <!--<div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 900.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="12" data-name="Noodles (Half)" data-price="900.00">Order</button>
+                        </div>-->
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="">
+                    <img src="./southern-fried-chicken.webp" alt="Chicken Parts" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Chicken Parts</h3>
+                        <p class="text-gray-600 mb-4">chickens are not fried whole. Instead, the chicken is divided into its constituent pieces</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">One Part: Rs 400.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="11" data-name="Noodles (Full)" data-price="1200.00">Order</button>
+                        </div>
+                        <!--<div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 900.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="12" data-name="Noodles (Half)" data-price="900.00">Order</button>
+                        </div>-->
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="">
+                    <img src="./PXL_20220831_195218884.PORTRAIT-1-768x1024.jpg" alt="Fish Deval" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Fish Deval</h3>
+                        <p class="text-gray-600 mb-4">Fried fish pieces are stir-fried in a sweet, sour, hot, and spicy chili-based sauce</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">Full: Rs 1200.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="11" data-name="Noodles (Full)" data-price="1200.00">Order</button>
+                        </div>
+                        <!--<div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 900.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="12" data-name="Noodles (Half)" data-price="900.00">Order</button>
+                        </div>-->
+                    </div>
+                </div>
+
+                <div class="menu-item bg-accent rounded-lg overflow-hidden shadow-md hover:shadow-lg transition" data-category="">
+                    <img src="./thai-fried-eggs-1.jpg" alt="Fried egg" class="w-full h-48 object-cover" loading="lazy">
+                    <div class="p-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-2">Fried Eggs</h3>
+                        <p class="text-gray-600 mb-4">Eggs are removed from their shells and cooked in a frying pan.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-primary">One Egg: Rs 70.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="11" data-name="Noodles (Full)" data-price="1200.00">Order</button>
+                        </div>
+                        <!--<div class="mt-2 flex justify-between items-center">
+                            <span class="text-md font-bold text-primary">Half: Rs 900.00</span>
+                            <button class="order-btn bg-primary hover:bg-secondary text-white px-4 py-2 rounded-full transition" data-id="12" data-name="Noodles (Half)" data-price="900.00">Order</button>
+                        </div>-->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-amber-100">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Restaurant interior" class="w-full rounded-lg shadow-lg" loading="lazy">
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl font-serif font-bold text-primary mb-6">Our Story</h2>
+                    <p class="text-gray-700 mb-4">Sunflower Restaurant began with a passion for authentic flavors and quality ingredients. Today, we've grown into a beloved local restaurant where every dish tells a story.</p>
+                    <p class="text-gray-700 mb-6">We prepare our meals with fresh ingredients daily. Our mission is to create a welcoming experience where people can enjoy great food delivered to their homes.</p>
+                    <div class="flex space-x-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                            <i class="fas fa-utensils text-3xl text-primary mb-2"></i>
+                            <h4 class="font-bold text-primary">20+</h4>
+                            <p class="text-sm text-gray-600">Delicious Meals</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                            <i class="fas fa-truck text-3xl text-primary mb-2"></i>
+                            <h4 class="font-bold text-primary">10km</h4>
+                            <p class="text-sm text-gray-600">Delivery Radius</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-serif font-bold text-primary mb-4">Visit Us</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">We'd love to see you at our restaurant or hear from you online</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <div class="bg-accent p-6 rounded-lg shadow-sm mb-6">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-4">Location</h3>
+                        <p class="text-gray-700 mb-2"><i class="fas fa-map-marker-alt text-secondary mr-2"></i> NO:409, KOSSINNA, GANEMULLA</p>
+                        <p class="text-gray-700 mb-2"><i class="fas fa-phone text-secondary mr-2"></i> (011) 234-5678</p>
+                        <p class="text-gray-700"><i class="fas fa-envelope text-secondary mr-2"></i> info@sunflowerrestaurant.com</p>
+                    </div>
+                    
+                    <div class="bg-accent p-6 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-serif font-bold text-primary mb-4">Hours</h3>
+                        <div class="space-y-2">
+                            <p class="flex justify-between text-gray-700"><span>Monday - Friday</span> <span>10:00 AM - 10:00 PM</span></p>
+                            <p class="flex justify-between text-gray-700"><span>Saturday - Sunday</span> <span>9:00 AM - 11:00 PM</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-accent p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-serif font-bold text-primary mb-4">Send Us a Message</h3>
+                    <form>
+                        <div class="mb-4">
+                            <label for="name" class="block text-gray-700 mb-2">Name</label>
+                            <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="block text-gray-700 mb-2">Email</label>
+                            <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div class="mb-4">
+                            <label for="message" class="block text-gray-700 mb-2">Message</label>
+                            <textarea id="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                        </div>
+                        <button type="submit" class="bg-primary hover:bg-secondary text-white px-6 py-3 rounded-full font-semibold transition w-full">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <img src="./logo.png" alt="Restaurant logo" class="w-10 h-10 rounded-full">
+                        <h2 class="text-2xl font-serif font-bold">Sunflower Restaurant</h2>
+                    </div>
+                    <p class="mt-2 text-amber-100">Authentic cuisine with fresh ingredients</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#" class="text-white hover:text-secondary transition"><i class="fab fa-facebook-f text-xl"></i></a>
+                    <a href="#" class="text-white hover:text-secondary transition"><i class="fab fa-instagram text-xl"></i></a>
+                    <a href="#" class="text-white hover:text-secondary transition"><i class="fab fa-whatsapp text-xl"></i></a>
+                </div>
+            </div>
+            
+            <div class="border-t border-amber-800 mt-8 pt-8 text-center text-amber-100">
+                <p>&copy; 2023 Sunflower Restaurant. All rights reserved.</p>
+                <p class="mt-2 text-sm">Home delivery available within 10km radius only</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu data
+        const menuItems = [
+            {
+                "id": 1,
+                "category": "rice",
+                "name": "Chicken Rice (Full)",
+                "description": "Flavorful chicken served with aromatic rice",
+                "price": 550.00,
+                "image": "https://images.unsplash.com/photo-1598214886806-c87b84b7078b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 2,
+                "category": "rice",
+                "name": "Chicken Rice (Half)",
+                "description": "Flavorful chicken served with aromatic rice",
+                "price": 450.00,
+                "image": "https://images.unsplash.com/photo-1598214886806-c87b84b7078b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 3,
+                "category": "rice",
+                "name": "Mix Rice (Full)",
+                "description": "A delightful combination of flavors and textures",
+                "price": 1600.00,
+                "image": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 4,
+                "category": "rice",
+                "name": "Mix Rice (Half)",
+                "description": "A delightful combination of flavors and textures",
+                "price": 1300.00,
+                "image": "https://images.unsplash.com/phone-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 5,
+                "category": "rice",
+                "name": "Sea Food Rice (Full)",
+                "description": "Fresh seafood delicately prepared with rice",
+                "price": 1500.00,
+                "image": "https://images.unsplash.com/photo-1563379091339-03246963d9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 6,
+                "category": "rice",
+                "name": "Sea Food Rice (Half)",
+                "description": "Fresh seafood delicately prepared with rice",
+                "price": 1300.00,
+                "image": "https://images.unsplash.com/photo-1563379091339-03246963d9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 7,
+                "category": "rice",
+                "name": "Vegetable Rice (Full)",
+                "description": "Fresh vegetables with aromatic rice",
+                "price": 350.00,
+                "image": "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 8,
+                "category": "rice",
+                "name": "Vegetable Rice (Half)",
+                "description": "Fresh vegetables with aromatic rice",
+                "price": 700.00,
+                "image": "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 9,
+                "category": "kottu",
+                "name": "Chicken Kottu (Full)",
+                "description": "Chopped roti with chicken, vegetables, and spices",
+                "price": 1200.00,
+                "image": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 10,
+                "category": "kottu",
+                "name": "Chicken Kottu (Half)",
+                "description": "Chopped roti with chicken, vegetables, and spices",
+                "price": 900.00,
+                "image": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 11,
+                "category": "kottu",
+                "name": "Noodles (Full)",
+                "description": "Stir-fried noodles with vegetables and your choice of protein",
+                "price": 1200.00,
+                "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            },
+            {
+                "id": 12,
+                "category": "kottu",
+                "name": "Noodles (Half)",
+                "description": "Stir-fried noodles with vegetables and your choice of protein",
+                "price": 900.00,
+                "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+            }
+        ];
+
+        // Shopping cart functionality
+        let cart = [];
+        
+        // DOM Elements
+        const cartButton = document.getElementById('cart-button');
+        const cartModal = document.getElementById('cart-modal');
+        const closeCart = document.getElementById('close-cart');
+        const cartItems = document.getElementById('cart-items');
+        const emptyCartMessage = document.getElementById('empty-cart-message');
+        const cartTotal = document.getElementById('cart-total');
+        const cartCount = document.getElementById('cart-count');
+        const viewCartBtn = document.getElementById('view-cart');
+        const checkoutSection = document.getElementById('checkout-section');
+        const cardDetails = document.getElementById('card-details');
+        const deliveryDetails = document.getElementById('delivery-details');
+        const placeOrderBtn = document.getElementById('place-order');
+        const orderConfirmation = document.getElementById('order-confirmation');
+        const confirmOk = document.getElementById('confirm-ok');
+        const categoryFilters = document.querySelectorAll('.category-filter');
+        const menuItemElements = document.querySelectorAll('.menu-item');
+        const orderButtons = document.querySelectorAll('.order-btn');
+        const paymentMethods = document.querySelectorAll('input[name="payment"]');
+        
+        // Event Listeners
+        cartButton.addEventListener('click', openCart);
+        closeCart.addEventListener('click', closeCartModal);
+        viewCartBtn.addEventListener('click', showCheckout);
+        placeOrderBtn.addEventListener('click', placeOrder);
+        confirmOk.addEventListener('click', closeOrderConfirmation);
+        
+        // Payment method change
+        paymentMethods.forEach(method => {
+            method.addEventListener('change', (e) => {
+                if (e.target.value === 'card') {
+                    cardDetails.classList.remove('hidden');
+                    deliveryDetails.classList.add('hidden');
+                } else {
+                    cardDetails.classList.add('hidden');
+                    deliveryDetails.classList.remove('hidden');
+                }
+            });
+        });
+        
+        // Category filtering
+        categoryFilters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                const category = filter.getAttribute('data-category');
+                
+                // Update active state
+                categoryFilters.forEach(f => f.classList.remove('bg-primary', 'text-white'));
+                filter.classList.add('bg-primary', 'text-white');
+                
+                // Filter items
+                menuItemElements.forEach(item => {
+                    if (category === 'all' || item.getAttribute('data-category') === category) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+            });
+        });
+        
+        // Order buttons
+        orderButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const id = e.target.getAttribute('data-id');
+                const name = e.target.getAttribute('data-name');
+                const price = parseFloat(e.target.getAttribute('data-price'));
+                
+                addToCart(id, name, price);
+                
+                // Show confirmation animation
+                const originalText = e.target.textContent;
+                e.target.textContent = 'Added!';
+                e.target.classList.add('bg-secondary');
+                
+                setTimeout(() => {
+                    e.target.textContent = originalText;
+                    e.target.classList.remove('bg-secondary');
+                }, 1000);
+            });
+        });
+        
+        // Navigation click handlers
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Functions
+        function openCart() {
+            updateCartDisplay();
+            cartModal.classList.remove('hidden');
+        }
+        
+        function closeCartModal() {
+            cartModal.classList.add('hidden');
+        }
+        
+        function addToCart(id, name, price) {
+            // Check if item already in cart
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id,
+                    name,
+                    price,
+                    quantity: 1
+                });
+            }
+            
+            updateCartCount();
+        }
+        
+        function updateCartCount() {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            if (totalItems > 0) {
+                cartCount.classList.remove('hidden');
+            } else {
+                cartCount.classList.add('hidden');
+            }
+        }
+        
+        function updateCartDisplay() {
+            // Clear current items
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                emptyCartMessage.classList.remove('hidden');
+                viewCartBtn.classList.add('hidden');
+                checkoutSection.classList.add('hidden');
+                return;
+            }
+            
+            emptyCartMessage.classList.add('hidden');
+            viewCartBtn.classList.remove('hidden');
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItemElement = document.createElement('div');
+                cartItemElement.className = 'flex justify-between items-center mb-4 pb-4 border-b';
+                cartItemElement.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-primary">${item.name}</h4>
+                        <p class="text-gray-600">Rs ${item.price.toFixed(2)} x ${item.quantity}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="font-bold mr-4">Rs ${itemTotal.toFixed(2)}</span>
+                        <button class="remove-item text-red-500 hover:text-red-700" data-id="${item.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                cartItems.appendChild(cartItemElement);
+            });
+            
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.closest('.remove-item').getAttribute('data-id');
+                    removeFromCart(id);
+                });
+            });
+            
+            cartTotal.textContent = `Rs ${total.toFixed(2)}`;
+        }
+        
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartCount();
+            updateCartDisplay();
+        }
+        
+        function showCheckout() {
+            checkoutSection.classList.remove('hidden');
+            viewCartBtn.classList.add('hidden');
+        }
+        
+        function placeOrder() {
+            // In a real application, this would send the order to a server
+            // For this demo, we'll just show a confirmation
+            
+            // Reset cart
+            cart = [];
+            updateCartCount();
+            
+            // Hide cart modal and show confirmation
+            cartModal.classList.add('hidden');
+            orderConfirmation.classList.remove('hidden');
+        }
+        
+        function closeOrderConfirmation() {
+            orderConfirmation.classList.add('hidden');
+        }
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === cartModal) {
+                closeCartModal();
+            }
+            if (e.target === orderConfirmation) {
+                closeOrderConfirmation();
+            }
+        });
+    </script>
+</body>
+</html>
