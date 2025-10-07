@@ -46,7 +46,6 @@ This is a **static website** created for educational purposes and to demonstrate
 <img width="1919" height="842" alt="Screenshot 2025-10-07 091223" src="https://github.com/user-attachments/assets/74d68f7a-e895-437c-9216-0d15a905013f" />
 
 
-*(You can upload the provided screenshots to your repo under an `assets/` folder and rename them as above.)*
 
 ---
 
